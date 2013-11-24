@@ -2,6 +2,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -57,12 +58,12 @@ public class myDriver {
      */
     
     job.setMapOutputKeyClass(Text.class);
-    job.setMapOutputValueClass(FloatWritable.class); 
+    job.setMapOutputValueClass(LongWritable.class); 
     /*
      * Specify the job's output key and value classes.
      */
     job.setOutputKeyClass(Text.class);
-    job.setOutputValueClass(FloatWritable.class);    
+    job.setOutputValueClass(LongWritable.class);    
     
     /*
      * Start the MapReduce job and wait for it to finish.

@@ -3,29 +3,33 @@ import java.io.IOException;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class myReducer extends Reducer<Text, FloatWritable, Text, FloatWritable> {
+public class myReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
 
-	FloatWritable maximum = new FloatWritable();
-	
+	//FloatWritable maximum = new FloatWritable();
+
+	//Text output = new Text();
+	LongWritable output = new LongWritable();
   @Override
-  public void reduce(Text key, Iterable<FloatWritable> values, Context context)
+  public void reduce(Text key, Iterable<LongWritable> values, Context context)
       throws IOException, InterruptedException {
 
-	  	maximum.set(-1.0f);
 		/*
 		 * For each value in the set of values passed to us by the mapper:
 		 */
-		for (FloatWritable value : values) 
+	  
+	  	//output.set("");
+	  	output.set(0);
+	  
+		//for (Text value : values)
+	  	for (LongWritable value: values)
 		{
-			float temp = value.get();
-			if (temp > maximum.get())
-			{
-				maximum.set(temp);
-			}
+			//output.set(output.toString() + "," + value.toString());
+	  		output.set(output.get() + value.get());
 		}
-		context.write(key, maximum);
+		context.write(key, output);
   }
 }
