@@ -47,7 +47,8 @@ public class myMapper extends Mapper<LongWritable, Text, gameEventWritable, Text
 			  
 			  // Set key as Batter Name - Game - Inning - Visitor Score - Home Score (Visitor/Home score to handle through the lineup situations)
 			  //outputKey.set(tokens[10] + "-" + tokens[0] + "-" + tokens[2] + "-" + tokens[8] + "-" + tokens[9]);
-			  outputKey.gameId = tokens[0];
+			  outputKey.ballpark = tokens[0].substring(0,  3);
+			  outputKey.gameId = tokens[0].substring(3);
 			  outputKey.playerId = tokens[10];
 			  outputKey.inning = tokens[2];
 			  outputKey.score = tokens[8] + "-" + tokens[9];

@@ -11,6 +11,7 @@ import org.apache.hadoop.io.WritableComparator;
 
 //public class gameEventWritable implements Writable {
 public class gameEventWritable implements WritableComparable<gameEventWritable> {
+	String ballpark;
 	String gameId;
 	String playerId;
 	String inning;
@@ -41,10 +42,10 @@ public class gameEventWritable implements WritableComparable<gameEventWritable> 
 	@Override
 	public int compareTo(gameEventWritable o) {
 		
-    	int result = this.gameId.compareTo(o.gameId);
+    	int result = this.playerId.compareTo(o.playerId);
     	if (result == 0)
     	{
-    		result = this.playerId.compareTo(o.playerId);
+    		result = this.gameId.compareTo(o.gameId);
     		
     		if (result == 0)
     		{
