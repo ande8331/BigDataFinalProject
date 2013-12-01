@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.FloatWritable;
@@ -8,6 +9,25 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritable> {
+
+	ArrayList<ConsecutiveEventTracker> events = new ArrayList<ConsecutiveEventTracker>();
+	private void checkCounters(Context context, String currentGame) throws IOException, InterruptedException
+	{
+		for (ConsecutiveEventTracker event: events)
+		{
+			if (!event.lastOccurance.equals(currentGame))
+			{
+				if (event.counter > 1)
+				{
+					output.set(lastPlayer + ":" + event.toString());
+					outputValue.set(event.counter);
+					context.write(output , outputValue);
+				}
+				event.reset();
+			}
+		}
+		
+	}
 
 	//FloatWritable maximum = new FloatWritable();
 	enum ReducerErrorCounters {
@@ -25,7 +45,7 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 	String lastHit = "";
 	LongWritable walkCount = new LongWritable(0);
 	LongWritable hitCount = new LongWritable(0);
-	
+	LongWritable outputValue = new LongWritable(0);
 	String hitStreakStart = "";
 	String hitStreakEnd = "";
 	//LongWritable output = new LongWritable();
@@ -40,7 +60,9 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 	  	if (!lastPlayer.equals(key.playerId))
 	  	{
 	  		context.getCounter(ReducerErrorCounters.PlayerFlush).increment(1);
-	  		
+
+	  		checkCounters(context, "");
+/*	  		
 	  		// Check for breaks in streaks and put them out
 	  		if (walkCount.get() > 1)
 	  		{
@@ -61,10 +83,12 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 	  		lastWalk = "";
 	  		hitCount.set(0);
 	  		lastHit = "";
-
+*/
 	  	}
 	  	else if (!lastGame.equals(key.gameId))
 	  	{
+	  		checkCounters(context, lastGame);
+/*	  		
 	  		if (!lastGame.equals(lastWalk))
 	  		{
 		  		// Check for breaks in streaks and put them out
@@ -90,6 +114,7 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 	  			hitStreakStart = "";
 	  			hitStreakEnd = "";
 	  		}
+*/
 	  	}
 	  	
 	  	lastGame = key.gameId;
@@ -100,7 +125,27 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 		{
 			//output.set(output.toString() + "," + value.toString());
 	  		//output.set(output.get() + value.get());
+	  		boolean keyFound = false;
 	  		
+	  		for (ConsecutiveEventTracker e: events)
+	  		{
+	  			if (value.toString().equals(e.eventType))
+	  			{
+	  				keyFound = true;
+	  				e.increment(lastGame);
+	  				break;
+	  			}	  			
+	  		}
+	  		
+	  		if (keyFound == false)
+	  		{
+	  			ConsecutiveEventTracker myTracker = new ConsecutiveEventTracker(value.toString());
+	  			myTracker.counter = 1;
+	  			myTracker.startDate = lastGame;
+	  			myTracker.lastOccurance = lastGame;
+	  			events.add(myTracker);
+	  		}
+/*	  		
 	  		if (value.toString().equals("Walk"))
 	  		{
 	  			context.getCounter(ReducerErrorCounters.WalksFound).increment(1);
@@ -136,6 +181,7 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 	  				context.getCounter(ReducerErrorCounters.SameGameHitsFound).increment(1);
 	  			}
 	  		}
+*/
 		}
   }
 }
