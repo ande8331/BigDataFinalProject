@@ -57,8 +57,8 @@ public class myDriver {
      * Specify Map Output key and value classes.
      */
     
-    job.setMapOutputKeyClass(Text.class);
-    job.setMapOutputValueClass(LongWritable.class); 
+    job.setMapOutputKeyClass(gameEventWritable.class);
+    job.setMapOutputValueClass(Text.class); 
     /*
      * Specify the job's output key and value classes.
      */
