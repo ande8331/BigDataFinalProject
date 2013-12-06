@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.Reducer;
  *   The data type of the output key
  *   The data type of the output value
  */   
-public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
+public class SortReducer extends Reducer<Text, Text, Text, Text> {
 
   /*
    * The reduce method runs once for each key received from
@@ -25,11 +25,55 @@ public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
    * IntWritable, and a Context object.
    */
 	
+	enum ReducerErrorCounters {
+		invalidTokenCount
+	}
+
+  String lastKey = "";
+  int lastKeyCounter = 0;
+  Text keyOutput = new Text();
+  Text valueOutput = new Text();
   @Override
-	public void reduce(Text key, Iterable<NullWritable> values, Context context)
+	public void reduce(Text key, Iterable<Text> values, Context context)
 			throws IOException, InterruptedException {
 
-			context.write(key, key);	
+	  
+	    String line = key.toString();
+
+	    /*
+	     * The line.split("\\W+") call uses regular expressions to split the
+	     * line up by non-word characters.
+	     * 
+	     * If you are not familiar with the use of regular expressions in
+	     * Java code, search the web for "Java Regex Tutorial." 
+	     */
+	    String[] tokens = line.split(":");
+	    
+	    if (tokens.length == 2)
+	    {	  
+  
+			  if (!lastKey.equals(tokens[0]))
+			  {
+				  lastKeyCounter = 0;
+				  lastKey = tokens[0];
+			  }
 		
+			  if (lastKeyCounter < 20)
+			  {
+					for (Text value: values)
+					{
+						//valueOutput.set(value);
+						keyOutput.set(tokens[0]);
+						valueOutput.set(tokens[1] + " : " + value.toString());
+					    context.write(keyOutput, valueOutput);
+					    lastKeyCounter++;
+					}
+			  }		
+	    }
+	    else
+	    {
+	    	context.getCounter(ReducerErrorCounters.invalidTokenCount).increment(1);	
+	    }
+
   }
 }

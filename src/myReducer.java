@@ -8,7 +8,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritable> {
+public class myReducer extends Reducer<gameEventWritable, Text, Text, Text> {
 
 	ArrayList<ConsecutiveEventTracker> events = new ArrayList<ConsecutiveEventTracker>();
 	private void checkCounters(Context context, String currentGame) throws IOException, InterruptedException
@@ -19,9 +19,14 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 			{
 				if (event.counter > 1)
 				{
-					output.set(lastPlayer + ":" + event.toString());
-					outputValue.set(event.counter);
-					context.write(output , outputValue);
+					// Pad the numbers to with 0's to avoid goofy sort issues
+					// This could be avoided if the sort mapper took the key in as a composite, or parsed it to int rather than text...
+					outputKey.set(event.eventType + ":"+ String.format("%05d", event.counter));
+					outputValue.set(lastPlayer + ":" + event.toString());
+					//output.set(lastPlayer + ":" + event.toString());
+					//outputValue.set(event.counter);
+					context.write(outputKey , outputValue);
+					
 				}
 				event.reset();
 			}
@@ -38,14 +43,12 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 		Terminators,
 		PlayerFlush
 	}
-	Text output = new Text();
+	Text outputKey = new Text();
 	String lastGame = "";
 	String lastPlayer = "";
 	String lastWalk = "";
 	String lastHit = "";
-	LongWritable walkCount = new LongWritable(0);
-	LongWritable hitCount = new LongWritable(0);
-	LongWritable outputValue = new LongWritable(0);
+	Text outputValue = new Text();
 	String hitStreakStart = "";
 	String hitStreakEnd = "";
 	//LongWritable output = new LongWritable();

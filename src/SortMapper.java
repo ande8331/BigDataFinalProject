@@ -1,5 +1,4 @@
 import java.io.IOException;
-
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -18,14 +17,20 @@ import org.apache.hadoop.mapreduce.Mapper;
  *   type for the reducer)
  */
 
-public class SortMapper extends Mapper<LongWritable, Text, Text, NullWritable> {
+public class SortMapper extends Mapper<LongWritable, Text, Text, Text> {
 
   /*
    * The map method runs once for each line of text in the input file.
    * The method receives a key of type LongWritable, a value of type
    * Text, and a Context object.
    */
+	enum MapperErrorCounters {
+		invalidTokenCount
+	}
 	
+
+	Text keyOutput = new Text();
+	Text valueOutput = new Text();
 	
   @Override
   public void map(LongWritable key, Text value, Context context)
@@ -43,6 +48,27 @@ public class SortMapper extends Mapper<LongWritable, Text, Text, NullWritable> {
      * If you are not familiar with the use of regular expressions in
      * Java code, search the web for "Java Regex Tutorial." 
      */
-    	context.write(value, NullWritable.get());
+	  
+	    String line = value.toString();
+
+	    /*
+	     * The line.split("\\W+") call uses regular expressions to split the
+	     * line up by non-word characters.
+	     * 
+	     * If you are not familiar with the use of regular expressions in
+	     * Java code, search the web for "Java Regex Tutorial." 
+	     */
+	    String[] tokens = line.split("\\t");
+	    
+	    if (tokens.length == 2)
+	    {	  
+    		keyOutput.set(tokens[0]);
+    		valueOutput.set(tokens[1]);
+	    	context.write(keyOutput, valueOutput);
+	    }
+	    else
+	    {
+	    	context.getCounter(MapperErrorCounters.invalidTokenCount).increment(1);	
+	    }
   }
 }

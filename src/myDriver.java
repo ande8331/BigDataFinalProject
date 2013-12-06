@@ -40,7 +40,6 @@ public class myDriver {
 
 		boolean sortResults = sortOutputData(intermediatePath, args[1]);
 
-
 		// Delete it now to free up space
 		fs.delete(new Path(intermediatePath), true);
 
@@ -66,7 +65,7 @@ public class myDriver {
 		 * Specify an easily-decipherable name for the job.
 		 * This job name will appear in reports and logs.
 		 */
-		job.setJobName("My Map-Reduce Job");
+		job.setJobName("Sort Streaks Job");
 
 		/*
 		 * Specify the paths to the input and output data based on the
@@ -86,7 +85,10 @@ public class myDriver {
 		 */
 
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(NullWritable.class); 
+		job.setMapOutputValueClass(Text.class);
+		
+		job.setSortComparatorClass(TextComparatorInverted.class);
+		
 		/*
 		 * Specify the job's output key and value classes.
 		 */
@@ -120,7 +122,7 @@ public class myDriver {
 		 * Specify an easily-decipherable name for the job.
 		 * This job name will appear in reports and logs.
 		 */
-		job.setJobName("My Map-Reduce Job");
+		job.setJobName("Parse Data Files Job");
 
 		/*
 		 * Specify the paths to the input and output data based on the
@@ -147,7 +149,7 @@ public class myDriver {
 		 * Specify the job's output key and value classes.
 		 */
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(LongWritable.class);    
+		job.setOutputValueClass(Text.class);    
 
 		/*
 		 * Start the MapReduce job and wait for it to finish.
