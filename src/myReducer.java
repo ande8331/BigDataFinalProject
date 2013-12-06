@@ -10,6 +10,8 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 public class myReducer extends Reducer<gameEventWritable, Text, Text, Text> {
 
+	
+	
 	ArrayList<ConsecutiveEventTracker> events = new ArrayList<ConsecutiveEventTracker>();
 	private void checkCounters(Context context, String currentGame) throws IOException, InterruptedException
 	{
@@ -41,7 +43,8 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, Text> {
 		HitsFound,
 		SameGameHitsFound,
 		Terminators,
-		PlayerFlush
+		PlayerFlush,
+		CleanupCalled
 	}
 	Text outputKey = new Text();
 	String lastGame = "";
@@ -52,6 +55,14 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, Text> {
 	String hitStreakStart = "";
 	String hitStreakEnd = "";
 	//LongWritable output = new LongWritable();
+	
+	@Override
+	public void cleanup(Context context) throws IOException, InterruptedException
+	{
+		context.getCounter(ReducerErrorCounters.CleanupCalled).increment(1);
+		checkCounters(context, "");		
+	}
+	
   @Override
   public void reduce(gameEventWritable key, Iterable<Text> values, Context context)
       throws IOException, InterruptedException {
