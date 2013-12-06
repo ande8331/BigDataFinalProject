@@ -78,16 +78,14 @@ public class myDriver {
 		 * Specify the mapper and reducer classes.
 		 */
 		job.setMapperClass(SortMapper.class);
+		job.setSortComparatorClass(TextComparatorInverted.class);
 		job.setReducerClass(SortReducer.class);
 
 		/*
 		 * Specify Map Output key and value classes.
 		 */
-
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(Text.class);
-		
-		job.setSortComparatorClass(TextComparatorInverted.class);
+		job.setMapOutputValueClass(Text.class);	
 		
 		/*
 		 * Specify the job's output key and value classes.
@@ -101,8 +99,6 @@ public class myDriver {
 		 */
 		return job.waitForCompletion(true);
 	}
-
-
 
 	private static boolean parseRetrosheetData(String inputPath, String outputPath) throws Exception {
 
@@ -135,16 +131,15 @@ public class myDriver {
 		 * Specify the mapper and reducer classes.
 		 */
 		job.setMapperClass(myMapper.class);
-		//job.setPartitionerClass(NYSEPartitioner.class);    
-		//job.setNumReduceTasks(26);
+		job.setPartitionerClass(gameEventPartitioner.class);    
 		job.setReducerClass(myReducer.class);
 
 		/*
 		 * Specify Map Output key and value classes.
 		 */
-
 		job.setMapOutputKeyClass(gameEventWritable.class);
-		job.setMapOutputValueClass(Text.class); 
+		job.setMapOutputValueClass(Text.class);
+		
 		/*
 		 * Specify the job's output key and value classes.
 		 */
