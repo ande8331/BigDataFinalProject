@@ -81,6 +81,7 @@ public class myDriver {
 		 */
 		job.setMapperClass(SortMapper.class);
 		job.setSortComparatorClass(TextComparatorInverted.class);
+		job.setPartitionerClass(SortPartitioner.class);
 		job.setReducerClass(SortReducer.class);
 
 		job.setInputFormatClass(KeyValueTextInputFormat.class);
