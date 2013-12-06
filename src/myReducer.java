@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 public class myReducer extends Reducer<gameEventWritable, Text, Text, Text> {
 
-	
+
 	
 	ArrayList<ConsecutiveEventTracker> events = new ArrayList<ConsecutiveEventTracker>();
 	private void checkCounters(Context context, String currentGame) throws IOException, InterruptedException
@@ -24,7 +24,7 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, Text> {
 					// Pad the numbers to with 0's to avoid goofy sort issues
 					// This could be avoided if the sort mapper took the key in as a composite, or parsed it to int rather than text...
 					outputKey.set(event.eventType + ":"+ String.format("%05d", event.counter));
-					outputValue.set(lastPlayer + ":" + event.toString());
+					outputValue.set(lastPlayer + ":" + event.getEventDateRange());
 					//output.set(lastPlayer + ":" + event.toString());
 					//outputValue.set(event.counter);
 					context.write(outputKey , outputValue);

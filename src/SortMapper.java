@@ -17,7 +17,7 @@ import org.apache.hadoop.mapreduce.Mapper;
  *   type for the reducer)
  */
 
-public class SortMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class SortMapper extends Mapper<Text, Text, Text, Text> {
 
   /*
    * The map method runs once for each line of text in the input file.
@@ -33,42 +33,9 @@ public class SortMapper extends Mapper<LongWritable, Text, Text, Text> {
 	Text valueOutput = new Text();
 	
   @Override
-  public void map(LongWritable key, Text value, Context context)
+  public void map(Text key, Text value, Context context)
       throws IOException, InterruptedException {
   
-    /*
-     * Convert the line, which is received as a Text object,
-     * to a String object.
-     */
-
-    /*
-     * The line.split("\\W+") call uses regular expressions to split the
-     * line up by non-word characters.
-     * 
-     * If you are not familiar with the use of regular expressions in
-     * Java code, search the web for "Java Regex Tutorial." 
-     */
-	  
-	    String line = value.toString();
-
-	    /*
-	     * The line.split("\\W+") call uses regular expressions to split the
-	     * line up by non-word characters.
-	     * 
-	     * If you are not familiar with the use of regular expressions in
-	     * Java code, search the web for "Java Regex Tutorial." 
-	     */
-	    String[] tokens = line.split("\\t");
-	    
-	    if (tokens.length == 2)
-	    {	  
-    		keyOutput.set(tokens[0]);
-    		valueOutput.set(tokens[1]);
-	    	context.write(keyOutput, valueOutput);
-	    }
-	    else
-	    {
-	    	context.getCounter(MapperErrorCounters.invalidTokenCount).increment(1);	
-	    }
+	  context.write(key, value);
   }
 }

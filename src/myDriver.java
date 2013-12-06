@@ -11,6 +11,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class myDriver {
@@ -81,6 +82,8 @@ public class myDriver {
 		job.setSortComparatorClass(TextComparatorInverted.class);
 		job.setReducerClass(SortReducer.class);
 
+		job.setInputFormatClass(KeyValueTextInputFormat.class);
+		
 		/*
 		 * Specify Map Output key and value classes.
 		 */

@@ -33,8 +33,8 @@ public class ConsecutiveEventTracker {
 		counter = 0;		
 	}
 	
-	public String toString()
+	public String getEventDateRange()
 	{
-		return eventType + ":" + startDate + "-" + lastOccurance;
+		return startDate + "-" + lastOccurance;
 	}
 }
