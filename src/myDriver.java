@@ -28,7 +28,8 @@ public class myDriver {
 
 		String intermediatePath = "tempData";
 		Configuration conf = new Configuration();
-		FileSystem fs = FileSystem.get(URI.create("hdfs://localhost/" + intermediatePath), conf);
+		FileSystem fs = FileSystem.get(conf);
+		
 		// Delete it here in case a previous failure didn't remove it.
 		fs.delete(new Path(intermediatePath), true);
 		
