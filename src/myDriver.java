@@ -1,3 +1,7 @@
+import java.net.URI;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.FloatWritable;
@@ -22,6 +26,11 @@ public class myDriver {
 		}
 
 		String intermediatePath = "tempData";
+		Configuration conf = new Configuration();
+		FileSystem fs = FileSystem.get(URI.create("hdfs://localhost/" + intermediatePath), conf);
+		// Delete it here in case a previous failure didn't remove it.
+		fs.delete(new Path(intermediatePath), true);
+		
 		boolean parseDataResult = parseRetrosheetData(args[0], intermediatePath);
 
 		if (parseDataResult != true)
@@ -31,6 +40,11 @@ public class myDriver {
 
 		boolean sortResults = sortOutputData(intermediatePath, args[1]);
 
+
+		// Delete it now to free up space
+		fs.delete(new Path(intermediatePath), true);
+
+		
 		System.exit(sortResults ? 0 : 2);
 	}
 
