@@ -110,6 +110,38 @@ public class myMapper extends Mapper<LongWritable, Text, gameEventWritable, Text
 				  context.write(outputKey, outputValue);				  
 			  }
 			  
+			  if (tokens[31].equals("T"))
+			  {
+				  outputValue.set("Pinch Hitter");
+				  context.write(outputKey, outputValue);
+			  }
+			  
+			  if (tokens[41].equals("T"))
+			  {
+				  outputValue.set("Double Play");
+				  context.write(outputKey, outputValue);
+			  }
+			  
+			  if (tokens[42].equals("T"))
+			  {
+				  outputValue.set("Double Play");
+				  context.write(outputKey, outputValue);
+				  outputValue.set("Triple Play");
+				  context.write(outputKey, outputValue);				  
+			  }
+			  
+			  if (tokens[48].equals("T"))
+			  {
+				  outputValue.set("Bunt");
+				  context.write(outputKey, outputValue);
+			  }
+			  
+			  int RBICount = Integer.parseInt(tokens[43].toString());
+			  if (RBICount > 0)
+			  {
+				  outputValue.set("RBI");
+				  context.write(outputKey, outputValue);				  				  
+			  }
 			  //outputKey.set(tokens[10]);
 			  //outputValue.set(1);
 			  //context.write(outputKey, outputValue);
