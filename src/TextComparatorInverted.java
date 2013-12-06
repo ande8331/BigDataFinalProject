@@ -12,8 +12,8 @@ public class TextComparatorInverted extends WritableComparator {
 	
 	@Override
 	public int compare(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
-		int n1 = WritableUtils.decodeVIntSize(b1[s1]);
-		int n2 = WritableUtils.decodeVIntSize(b2[s2]);
-		return compareBytes(b1, s1+n1, l1-n1, b2, s2+n2, l2-n2) * -1;
-      }
+		return Text.Comparator.compareBytes(b1, s1, l1, b2, s2, l2) * -1;
+    }
+	
+	
 }
