@@ -12,6 +12,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class myDriver {
@@ -84,13 +85,13 @@ public class myDriver {
 		job.setPartitionerClass(SortPartitioner.class);
 		job.setReducerClass(SortReducer.class);
 
-		job.setInputFormatClass(KeyValueTextInputFormat.class);
+		job.setInputFormatClass(TextInputFormat.class);
 		
 		/*
 		 * Specify Map Output key and value classes.
 		 */
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(Text.class);	
+		job.setMapOutputValueClass(NullWritable.class);	
 		
 		/*
 		 * Specify the job's output key and value classes.

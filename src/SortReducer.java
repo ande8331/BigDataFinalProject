@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.Reducer;
  *   The data type of the output key
  *   The data type of the output value
  */   
-public class SortReducer extends Reducer<Text, Text, Text, Text> {
+public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
 
   /*
    * The reduce method runs once for each key received from
@@ -34,7 +34,7 @@ public class SortReducer extends Reducer<Text, Text, Text, Text> {
   Text keyOutput = new Text();
   Text valueOutput = new Text();
   @Override
-	public void reduce(Text key, Iterable<Text> values, Context context)
+	public void reduce(Text key, Iterable<NullWritable> values, Context context)
 			throws IOException, InterruptedException {
 
 	  
@@ -49,7 +49,7 @@ public class SortReducer extends Reducer<Text, Text, Text, Text> {
 	     */
 	    String[] tokens = line.split(":");
 	    
-	    if (tokens.length == 2)
+	    if (tokens.length == 4)
 	    {	  
   
 			  if (!lastKey.equals(tokens[0]))
@@ -60,11 +60,11 @@ public class SortReducer extends Reducer<Text, Text, Text, Text> {
 		
 			  if (lastKeyCounter < 20)
 			  {
-					for (Text value: values)
+					//for (Text value: values)
 					{
 						//valueOutput.set(value);
 						keyOutput.set(tokens[0]);
-						valueOutput.set(tokens[1] + " : " + value.toString());
+						valueOutput.set(tokens[1] + " : " + tokens[2] + ":" + tokens[3]);
 					    context.write(keyOutput, valueOutput);
 					    lastKeyCounter++;
 					}

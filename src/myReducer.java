@@ -5,10 +5,11 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class myReducer extends Reducer<gameEventWritable, Text, Text, Text> {
+public class myReducer extends Reducer<gameEventWritable, Text, Text, NullWritable> {
 
 
 	
@@ -23,11 +24,10 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, Text> {
 				{
 					// Pad the numbers to with 0's to avoid goofy sort issues
 					// This could be avoided if the sort mapper took the key in as a composite, or parsed it to int rather than text...
-					outputKey.set(event.eventType + ":"+ String.format("%05d", event.counter));
-					outputValue.set(event.getEventDateRange() + " : " + lastPlayer);
+					outputKey.set(event.eventType + ":"+ String.format("%05d", event.counter) + ":" + event.getEventDateRange() + ":" + lastPlayer);
 					//output.set(lastPlayer + ":" + event.toString());
 					//outputValue.set(event.counter);
-					context.write(outputKey , outputValue);
+					context.write(outputKey , NullWritable.get());
 					
 				}
 				event.reset();

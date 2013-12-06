@@ -17,7 +17,7 @@ import org.apache.hadoop.mapreduce.Mapper;
  *   type for the reducer)
  */
 
-public class SortMapper extends Mapper<Text, Text, Text, Text> {
+public class SortMapper extends Mapper<LongWritable, Text, Text, NullWritable> {
 
   /*
    * The map method runs once for each line of text in the input file.
@@ -33,9 +33,9 @@ public class SortMapper extends Mapper<Text, Text, Text, Text> {
 	Text valueOutput = new Text();
 	
   @Override
-  public void map(Text key, Text value, Context context)
+  public void map(LongWritable key, Text value, Context context)
       throws IOException, InterruptedException {
   
-	  context.write(key, value);
+	  context.write(value, NullWritable.get());
   }
 }
