@@ -125,63 +125,29 @@ public class myReducer extends Reducer<gameEventWritable, Text, Text, LongWritab
 		{
 			//output.set(output.toString() + "," + value.toString());
 	  		//output.set(output.get() + value.get());
-	  		boolean keyFound = false;
-	  		
-	  		for (ConsecutiveEventTracker e: events)
+	  		if (value.getLength() > 0)
 	  		{
-	  			if (value.toString().equals(e.eventType))
-	  			{
-	  				keyFound = true;
-	  				e.increment(lastGame);
-	  				break;
-	  			}	  			
+		  		boolean keyFound = false;
+		  		
+		  		for (ConsecutiveEventTracker e: events)
+		  		{
+		  			if (value.toString().equals(e.eventType))
+		  			{
+		  				keyFound = true;
+		  				e.increment(lastGame);
+		  				break;
+		  			}	  			
+		  		}
+		  		
+		  		if (keyFound == false)
+		  		{
+		  			ConsecutiveEventTracker myTracker = new ConsecutiveEventTracker(value.toString());
+		  			myTracker.counter = 1;
+		  			myTracker.startDate = lastGame;
+		  			myTracker.lastOccurance = lastGame;
+		  			events.add(myTracker);
+		  		}
 	  		}
-	  		
-	  		if (keyFound == false)
-	  		{
-	  			ConsecutiveEventTracker myTracker = new ConsecutiveEventTracker(value.toString());
-	  			myTracker.counter = 1;
-	  			myTracker.startDate = lastGame;
-	  			myTracker.lastOccurance = lastGame;
-	  			events.add(myTracker);
-	  		}
-/*	  		
-	  		if (value.toString().equals("Walk"))
-	  		{
-	  			context.getCounter(ReducerErrorCounters.WalksFound).increment(1);
-	  			
-	  			if (!lastWalk.equals(lastGame))
-	  			{
-		  			lastWalk = lastGame;
-		  			walkCount.set(walkCount.get() + 1);
-	  			}
-	  			else
-	  			{
-	  				context.getCounter(ReducerErrorCounters.SameGameWalksFound).increment(1);
-	  			}
-	  		}
-	  		
-	  		if (value.toString().equals("Hit"))
-	  		{
-	  			context.getCounter(ReducerErrorCounters.HitsFound).increment(1);
-	  			
-	  			if (hitStreakStart.length() < 1)
-	  			{
-	  				hitStreakStart = lastGame;
-	  			}
-	  			hitStreakEnd = lastGame;
-	  			
-	  			if (!lastHit.equals(lastGame))
-	  			{
-		  			lastHit = lastGame;
-		  			hitCount.set(hitCount.get() + 1);
-	  			}
-	  			else
-	  			{
-	  				context.getCounter(ReducerErrorCounters.SameGameHitsFound).increment(1);
-	  			}
-	  		}
-*/
 		}
   }
 }
