@@ -1,4 +1,9 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -26,9 +31,39 @@ public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
    */
 	
 	enum ReducerErrorCounters {
-		invalidTokenCount
+		validPlayerTokenCount,
+		invalidTokenCount,
+		invalidPlayerTokenCount
 	}
 
+  Map<String, String> playerLookupMap = new HashMap<String, String>();
+	
+  @Override
+  public void setup(Context context) throws IOException, InterruptedException 
+  {/*	  
+	  File file = new File("_roster.txt");
+	  BufferedReader reader = null;
+	  
+	  reader = new BufferedReader(new FileReader(file));
+	  String text = null;
+	  
+	  while ((text = reader.readLine()) != null)
+	  {
+		  String[] tokens = text.split(",");
+		  if (tokens.length == 4)
+		  {
+			  playerLookupMap.put(tokens[3], tokens[2] + tokens[1]);
+			  context.getCounter(ReducerErrorCounters.validPlayerTokenCount).increment(1);
+		  }
+		  else
+		  {
+			  context.getCounter(ReducerErrorCounters.invalidPlayerTokenCount).increment(1);
+		  }
+	  }
+	  reader.close();
+	  */
+  }
+	
   String lastKey = "";
   int lastKeyCounter = 0;
   Text keyOutput = new Text();

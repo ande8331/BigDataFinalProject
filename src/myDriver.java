@@ -1,6 +1,8 @@
 import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
@@ -14,21 +16,16 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 
-public class myDriver {
+public class myDriver extends Configured implements Tool {
 
-	public static void main(String[] args) throws Exception {
-
-		/*
-		 * Validate that two arguments were passed from the command line.
-		 */
-		if (args.length != 2) {
-			System.out.printf("Usage: myDriver <input dir> <output dir>\n");
-			System.exit(-1);
-		}
-
+	@Override
+	public int run(String[] args) throws Exception {
 		String intermediatePath = "tempData";
-		Configuration conf = new Configuration();
+		Configuration conf = new Configuration();		
+		
 		FileSystem fs = FileSystem.get(conf);
 		
 		// Delete it here in case a previous failure didn't remove it.
@@ -47,7 +44,21 @@ public class myDriver {
 		fs.delete(new Path(intermediatePath), true);
 
 		
-		System.exit(sortResults ? 0 : 2);
+		return sortResults ? 0 : 2;
+	}
+	
+	public static void main(String[] args) throws Exception {
+
+		/*
+		 * Validate that two arguments were passed from the command line.
+		 */
+		//if (args.length != 2) {
+		//	System.out.printf("Usage: myDriver <input dir> <output dir>\n");
+		//	System.exit(-1);
+		//}
+
+		int exitCode = ToolRunner.run(new myDriver(), args);
+		System.exit(exitCode);
 	}
 
 	private static boolean sortOutputData(String inputPath, String outputPath) throws Exception {
@@ -55,8 +66,8 @@ public class myDriver {
 		/*
 		 * Instantiate a Job object for your job's configuration. 
 		 */
-		Job job = new Job();
-
+		Job job = new Job();		
+		DistributedCache.addCacheFile(new Path("_roster.txt").toUri(), job.getConfiguration());
 		/*
 		 * Specify the jar file that contains your driver, mapper, and reducer.
 		 * Hadoop will transfer this jar file to nodes in your cluster running 
@@ -103,6 +114,9 @@ public class myDriver {
 		 * Start the MapReduce job and wait for it to finish.
 		 * If it finishes successfully, return 0. If not, return 1.
 		 */
+		
+		System.err.println(job.getConfiguration().get("mapred.cache.files"));
+		
 		return job.waitForCompletion(true);
 	}
 
