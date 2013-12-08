@@ -103,7 +103,7 @@ public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
 				  lastKey = tokens[0];
 			  }
 		
-			  if ((lastKeyCounter < 20) || (tokens[1].equals(lastStreakValue)))
+			  if ((lastKeyCounter < 5) || (tokens[1].equals(lastStreakValue)))
 			  {
 					//for (Text value: values)
 					{
