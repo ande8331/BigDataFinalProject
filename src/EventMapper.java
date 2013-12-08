@@ -56,6 +56,12 @@ public class EventMapper extends Mapper<LongWritable, Text, gameEventWritable, T
 			  {
 				  outputValue.set("Strikeout");
 				  context.write(outputKey, outputValue);
+				  
+				  if (tokens[7].endsWith("C"))
+				  {
+					  outputValue.set("Strikeout - Caught Looking");
+					  context.write(outputKey, outputValue);					  
+				  }
 			  }
 			  else if (eventType == 14)
 			  {
