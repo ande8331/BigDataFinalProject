@@ -75,7 +75,7 @@ public class EventMapper extends Mapper<LongWritable, Text, gameEventWritable, T
 			  }
 			  else if (eventType == 16)
 			  {
-				  outputValue.set("HBP");
+				  outputValue.set("Hit By Pitch");
 				  context.write(outputKey, outputValue);
 				  outputValue.set("Reached Base");
 				  context.write(outputKey, outputValue);
@@ -138,15 +138,15 @@ public class EventMapper extends Mapper<LongWritable, Text, gameEventWritable, T
 			  
 			  if (tokens[41].equals("T"))
 			  {
-				  outputValue.set("Double Play");
+				  outputValue.set("Hit Into Double Play");
 				  context.write(outputKey, outputValue);
 			  }
 			  
 			  if (tokens[42].equals("T"))
 			  {
-				  outputValue.set("Double Play");
+				  outputValue.set("Hit Into Double Play");
 				  context.write(outputKey, outputValue);
-				  outputValue.set("Triple Play");
+				  outputValue.set("Hit Into Triple Play");
 				  context.write(outputKey, outputValue);				  
 			  }
 			  
