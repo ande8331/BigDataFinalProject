@@ -35,6 +35,27 @@ public class ConsecutiveEventTracker {
 	
 	public String getEventDateRange()
 	{
-		return startDate + "-" + lastOccurance;
+		String startDateOutput = startDate.substring(0, 8);
+		String endDateOutput = lastOccurance.substring(0, 8);
+/*  Not sure why, but when this code is active, it seems to mess up the sort order, leading to bad output (disorganized)		
+		if (startDate.endsWith("1"))
+		{
+			startDateOutput = startDateOutput + "Game1";
+		}
+		else if (startDate.endsWith("2"))
+		{
+			startDateOutput = startDateOutput + "Game2";
+		}
+		
+		if (lastOccurance.endsWith("1"))
+		{
+			endDateOutput = endDateOutput + "Game1";
+		}
+		else if (lastOccurance.endsWith("2"))
+		{
+			endDateOutput = endDateOutput + "Game2";
+		}
+*/
+		return startDateOutput + "-" + endDateOutput;
 	}
 }
