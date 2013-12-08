@@ -19,7 +19,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class myDriver extends Configured implements Tool {
+public class StreakFinder extends Configured implements Tool {
 
 	@Override
 	public int run(String[] args) throws Exception {
@@ -57,7 +57,7 @@ public class myDriver extends Configured implements Tool {
 		//	System.exit(-1);
 		//}
 
-		int exitCode = ToolRunner.run(new myDriver(), args);
+		int exitCode = ToolRunner.run(new StreakFinder(), args);
 		System.exit(exitCode);
 	}
 
@@ -73,7 +73,7 @@ public class myDriver extends Configured implements Tool {
 		 * Hadoop will transfer this jar file to nodes in your cluster running 
 		 * mapper and reducer tasks.
 		 */
-		job.setJarByClass(myDriver.class);
+		job.setJarByClass(StreakFinder.class);
 
 		/*
 		 * Specify an easily-decipherable name for the job.
@@ -132,7 +132,7 @@ public class myDriver extends Configured implements Tool {
 		 * Hadoop will transfer this jar file to nodes in your cluster running 
 		 * mapper and reducer tasks.
 		 */
-		job.setJarByClass(myDriver.class);
+		job.setJarByClass(StreakFinder.class);
 
 		/*
 		 * Specify an easily-decipherable name for the job.
@@ -150,9 +150,9 @@ public class myDriver extends Configured implements Tool {
 		/*
 		 * Specify the mapper and reducer classes.
 		 */
-		job.setMapperClass(myMapper.class);
+		job.setMapperClass(EventMapper.class);
 		job.setPartitionerClass(gameEventPartitioner.class);    
-		job.setReducerClass(myReducer.class);
+		job.setReducerClass(StreakReducer.class);
 
 		/*
 		 * Specify Map Output key and value classes.

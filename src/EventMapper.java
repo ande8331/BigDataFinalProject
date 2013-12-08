@@ -8,7 +8,7 @@ import org.apache.hadoop.mapreduce.Mapper.Context;
 import au.com.bytecode.opencsv.CSVParser;
 
 
-public class myMapper extends Mapper<LongWritable, Text, gameEventWritable, Text> {
+public class EventMapper extends Mapper<LongWritable, Text, gameEventWritable, Text> {
 
 	gameEventWritable outputKey = new gameEventWritable();
 	//Text outputKey = new Text();
