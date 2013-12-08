@@ -1,10 +1,13 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.hadoop.fs.FileUtil;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -33,18 +36,24 @@ public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
 	enum ReducerErrorCounters {
 		validPlayerTokenCount,
 		invalidTokenCount,
-		invalidPlayerTokenCount
+		invalidPlayerTokenCount,
+		playerLookupFailed
 	}
 
   Map<String, String> playerLookupMap = new HashMap<String, String>();
 	
   @Override
   public void setup(Context context) throws IOException, InterruptedException 
-  {/*	  
-	  File file = new File("_roster.txt");
-	  BufferedReader reader = null;
+  {	  
+	  Path[] cacheFiles = context.getLocalCacheFiles();
+	  System.err.println("Number of cache files: " + cacheFiles.length);
+	  System.err.println("Cache File 0: " + cacheFiles[0]);
+	  System.err.println("Cache File 0: " + cacheFiles[0].toString());
+	  System.err.println("Cache File 0: " + cacheFiles[0].toUri());
+	  //FileInputStream fs = new FileInputStream(cacheFiles[0].toString());
 	  
-	  reader = new BufferedReader(new FileReader(file));
+	  File file = new File(cacheFiles[0].toString());
+	  BufferedReader reader = new BufferedReader(new FileReader(file));	  
 	  String text = null;
 	  
 	  while ((text = reader.readLine()) != null)
@@ -52,7 +61,7 @@ public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
 		  String[] tokens = text.split(",");
 		  if (tokens.length == 4)
 		  {
-			  playerLookupMap.put(tokens[3], tokens[2] + tokens[1]);
+			  playerLookupMap.put(tokens[2], tokens[1] + " " + tokens[0]);
 			  context.getCounter(ReducerErrorCounters.validPlayerTokenCount).increment(1);
 		  }
 		  else
@@ -61,10 +70,11 @@ public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
 		  }
 	  }
 	  reader.close();
-	  */
+	  
   }
 	
   String lastKey = "";
+  String lastStreakValue = "";
   int lastKeyCounter = 0;
   Text keyOutput = new Text();
   Text valueOutput = new Text();
@@ -93,13 +103,23 @@ public class SortReducer extends Reducer<Text, NullWritable, Text, Text> {
 				  lastKey = tokens[0];
 			  }
 		
-			  if (lastKeyCounter < 20)
+			  if ((lastKeyCounter < 20) || (tokens[1].equals(lastStreakValue)))
 			  {
 					//for (Text value: values)
 					{
 						//valueOutput.set(value);
+						lastStreakValue = tokens[1];
 						keyOutput.set(tokens[0]);
-						valueOutput.set(tokens[1] + " : " + tokens[2] + ":" + tokens[3]);
+						
+						String playerName = playerLookupMap.get(tokens[3]);
+						if (playerName == null)
+						{
+							playerName = tokens[3];
+							System.err.println("Lookup failed for: " + playerName + ".");
+							context.getCounter(ReducerErrorCounters.playerLookupFailed).increment(1);
+						}
+						
+						valueOutput.set(tokens[1] + " : " + tokens[2] + ":" + playerName);
 					    context.write(keyOutput, valueOutput);
 					    lastKeyCounter++;
 					}
