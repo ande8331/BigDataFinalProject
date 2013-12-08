@@ -61,6 +61,8 @@ public class myMapper extends Mapper<LongWritable, Text, gameEventWritable, Text
 			  {
 				  outputValue.set("Walk");
 				  context.write(outputKey, outputValue);
+				  outputValue.set("Reached Base");
+				  context.write(outputKey, outputValue);
 			  }
 			  else if (eventType == 15)
 			  {
@@ -68,10 +70,14 @@ public class myMapper extends Mapper<LongWritable, Text, gameEventWritable, Text
 				  context.write(outputKey, outputValue);
 				  outputValue.set("Walk");
 				  context.write(outputKey, outputValue);
+				  outputValue.set("Reached Base");
+				  context.write(outputKey, outputValue);
 			  }
 			  else if (eventType == 16)
 			  {
 				  outputValue.set("HBP");
+				  context.write(outputKey, outputValue);
+				  outputValue.set("Reached Base");
 				  context.write(outputKey, outputValue);
 			  }
 			  else if (eventType == 20)
@@ -80,12 +86,18 @@ public class myMapper extends Mapper<LongWritable, Text, gameEventWritable, Text
 				  context.write(outputKey, outputValue);
 				  outputValue.set("Hit");
 				  context.write(outputKey, outputValue);
+				  outputValue.set("Reached Base");
+				  context.write(outputKey, outputValue);
 			  }
 			  else if (eventType == 21)
 			  {
 				  outputValue.set("Double");
 				  context.write(outputKey, outputValue);
 				  outputValue.set("Hit");
+				  context.write(outputKey, outputValue);
+				  outputValue.set("Extra Base Hit");
+				  context.write(outputKey, outputValue);
+				  outputValue.set("Reached Base");
 				  context.write(outputKey, outputValue);
 			  }
 			  else if (eventType == 22)
@@ -94,12 +106,20 @@ public class myMapper extends Mapper<LongWritable, Text, gameEventWritable, Text
 				  context.write(outputKey, outputValue);
 				  outputValue.set("Hit");
 				  context.write(outputKey, outputValue);
+				  outputValue.set("Extra Base Hit");
+				  context.write(outputKey, outputValue);
+				  outputValue.set("Reached Base");
+				  context.write(outputKey, outputValue);
 			  }
 			  else if (eventType == 23)
 			  {
 				  outputValue.set("Home Run");
 				  context.write(outputKey, outputValue);
 				  outputValue.set("Hit");
+				  context.write(outputKey, outputValue);
+				  outputValue.set("Extra Base Hit");
+				  context.write(outputKey, outputValue);
+				  outputValue.set("Reached Base");
 				  context.write(outputKey, outputValue);
 			  }
 			  else
