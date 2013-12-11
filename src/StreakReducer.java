@@ -1,18 +1,12 @@
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.hadoop.io.DoubleWritable;
-import org.apache.hadoop.io.FloatWritable;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 public class StreakReducer extends Reducer<gameEventWritable, Text, Text, NullWritable> {
 
-
-	
 	ArrayList<ConsecutiveEventTracker> events = new ArrayList<ConsecutiveEventTracker>();
 	private void checkCounters(Context context, String currentGame) throws IOException, InterruptedException
 	{
@@ -25,15 +19,11 @@ public class StreakReducer extends Reducer<gameEventWritable, Text, Text, NullWr
 					// Pad the numbers to with 0's to avoid goofy sort issues
 					// This could be avoided if the sort mapper took the key in as a composite, or parsed it to int rather than text...
 					outputKey.set(event.eventType + ":"+ String.format("%05d", event.counter) + ":" + event.getEventDateRange() + ":" + lastPlayer);
-					//output.set(lastPlayer + ":" + event.toString());
-					//outputValue.set(event.counter);
-					context.write(outputKey , NullWritable.get());
-					
+					context.write(outputKey , NullWritable.get());					
 				}
 				event.reset();
 			}
 		}
-		
 	}
 
 	//FloatWritable maximum = new FloatWritable();
@@ -46,6 +36,14 @@ public class StreakReducer extends Reducer<gameEventWritable, Text, Text, NullWr
 		PlayerFlush,
 		CleanupCalled
 	}
+
+	@Override
+	public void cleanup(Context context) throws IOException, InterruptedException
+	{
+		context.getCounter(ReducerErrorCounters.CleanupCalled).increment(1);
+		checkCounters(context, "");		
+	}
+
 	Text outputKey = new Text();
 	String lastGame = "";
 	String lastPlayer = "";
@@ -54,114 +52,53 @@ public class StreakReducer extends Reducer<gameEventWritable, Text, Text, NullWr
 	Text outputValue = new Text();
 	String hitStreakStart = "";
 	String hitStreakEnd = "";
-	//LongWritable output = new LongWritable();
 	
 	@Override
-	public void cleanup(Context context) throws IOException, InterruptedException
-	{
-		context.getCounter(ReducerErrorCounters.CleanupCalled).increment(1);
-		checkCounters(context, "");		
-	}
-	
-  @Override
-  public void reduce(gameEventWritable key, Iterable<Text> values, Context context)
-      throws IOException, InterruptedException {
+	public void reduce(gameEventWritable key, Iterable<Text> values, Context context)
+			throws IOException, InterruptedException {
 
 		/*
 		 * For each value in the set of values passed to us by the mapper:
 		 */
-	  
-	  	if (!lastPlayer.equals(key.playerId))
-	  	{
-	  		context.getCounter(ReducerErrorCounters.PlayerFlush).increment(1);
 
-	  		checkCounters(context, "");
-/*	  		
-	  		// Check for breaks in streaks and put them out
-	  		if (walkCount.get() > 1)
-	  		{
-  				output.set(lastPlayer+"-Walks");
-	  			context.write(output , walkCount);
-	  		}
-	  		
-	  		// Check for breaks in streaks and put them out
-	  		if (hitCount.get() > 1)
-	  		{
-  				output.set(lastPlayer+"-Hits");
-	  			context.write(output , hitCount);
-	  			hitStreakStart = "";
-	  			hitStreakEnd = "";
-	  		}
-
-	  		walkCount.set(0);
-	  		lastWalk = "";
-	  		hitCount.set(0);
-	  		lastHit = "";
-*/
-	  	}
-	  	else if (!lastGame.equals(key.gameId))
-	  	{
-	  		checkCounters(context, lastGame);
-/*	  		
-	  		if (!lastGame.equals(lastWalk))
-	  		{
-		  		// Check for breaks in streaks and put them out
-		  		if (walkCount.get() > 1)
-		  		{
-	  				output.set(lastPlayer+"-Walks");
-		  			context.write(output , walkCount);
-		  		}
-		  		walkCount.set(0);
-		  		lastWalk = "";	  			
-	  		}
-	  		
-	  		if (!lastGame.equals(lastHit))
-	  		{
-		  		// Check for breaks in streaks and put them out
-		  		if (hitCount.get() > 1)
-		  		{
-	  				output.set(lastPlayer+ "-Hits" + " : " + hitStreakStart + "-" + hitStreakEnd);
-		  			context.write(output , hitCount);
-		  		}
-		  		hitCount.set(0);
-		  		lastHit = "";	  			
-	  			hitStreakStart = "";
-	  			hitStreakEnd = "";
-	  		}
-*/
-	  	}
-	  	
-	  	lastGame = key.gameId;
-	  	lastPlayer = key.playerId;	 
-		  
-		//for (Text value : values)
-	  	for (Text value: values)
+		if (!lastPlayer.equals(key.playerId))
 		{
-			//output.set(output.toString() + "," + value.toString());
-	  		//output.set(output.get() + value.get());
-	  		if (value.getLength() > 0)
-	  		{
-		  		boolean keyFound = false;
-		  		
-		  		for (ConsecutiveEventTracker e: events)
-		  		{
-		  			if (value.toString().equals(e.eventType))
-		  			{
-		  				keyFound = true;
-		  				e.increment(lastGame);
-		  				break;
-		  			}	  			
-		  		}
-		  		
-		  		if (keyFound == false)
-		  		{
-		  			ConsecutiveEventTracker myTracker = new ConsecutiveEventTracker(value.toString());
-		  			myTracker.counter = 1;
-		  			myTracker.startDate = lastGame;
-		  			myTracker.lastOccurance = lastGame;
-		  			events.add(myTracker);
-		  		}
-	  		}
+			context.getCounter(ReducerErrorCounters.PlayerFlush).increment(1);
+			checkCounters(context, "");
 		}
-  }
+		else if (!lastGame.equals(key.gameId))
+		{
+			checkCounters(context, lastGame);
+		}
+
+		lastGame = key.gameId;
+		lastPlayer = key.playerId;	 
+
+		for (Text value: values)
+		{
+			if (value.getLength() > 0)
+			{
+				boolean keyFound = false;
+
+				for (ConsecutiveEventTracker e: events)
+				{
+					if (value.toString().equals(e.eventType))
+					{
+						keyFound = true;
+						e.increment(lastGame);
+						break;
+					}	  			
+				}
+
+				if (keyFound == false)
+				{
+					ConsecutiveEventTracker myTracker = new ConsecutiveEventTracker(value.toString());
+					myTracker.counter = 1;
+					myTracker.startDate = lastGame;
+					myTracker.lastOccurance = lastGame;
+					events.add(myTracker);
+				}
+			}
+		}
+	}
 }

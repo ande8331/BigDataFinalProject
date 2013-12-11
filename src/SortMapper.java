@@ -1,5 +1,5 @@
 import java.io.IOException;
-import org.apache.hadoop.io.IntWritable;
+
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -28,7 +28,6 @@ public class SortMapper extends Mapper<LongWritable, Text, Text, NullWritable> {
 		invalidTokenCount
 	}
 	
-
 	Text keyOutput = new Text();
 	Text valueOutput = new Text();
 	

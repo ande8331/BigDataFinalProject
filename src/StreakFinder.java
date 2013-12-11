@@ -1,19 +1,12 @@
-import java.net.URI;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DoubleWritable;
-import org.apache.hadoop.io.FloatWritable;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
@@ -115,8 +108,6 @@ public class StreakFinder extends Configured implements Tool {
 		 * If it finishes successfully, return 0. If not, return 1.
 		 */
 		
-		System.err.println(job.getConfiguration().get("mapred.cache.files"));
-		
 		return job.waitForCompletion(true);
 	}
 
@@ -172,6 +163,4 @@ public class StreakFinder extends Configured implements Tool {
 		 */
 		return job.waitForCompletion(true);
 	}
-
 }
-
